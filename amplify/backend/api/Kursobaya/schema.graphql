@@ -1,4 +1,4 @@
-type Comments @model @auth(rules: [{allow: public}]) {
+type Comments @model @auth(rules: [{ allow: public }]) {
   id: ID!
   text: String
   image: String
@@ -6,7 +6,7 @@ type Comments @model @auth(rules: [{allow: public}]) {
   userID: ID! @index(name: "byUser")
 }
 
-type Post @model @auth(rules: [{allow: public}]) {
+type Post @model @auth(rules: [{ allow: public }]) {
   id: ID!
   title: String
   description: String
@@ -16,12 +16,18 @@ type Post @model @auth(rules: [{allow: public}]) {
   Comments: [Comments] @hasMany(indexName: "byPost", fields: ["id"])
   block: String
   userID: ID! @index(name: "byUser")
+  type: String!
+    @index(
+      name: "byType"
+      queryField: "PostsByType"
+      sortKeyFields: ["createdAt"]
+    )
+  createdAt: AWSDateTime!
 }
 
-type User @model @auth(rules: [{allow: public}]) {
+type User @model @auth(rules: [{ allow: public }]) {
   id: ID!
   name: String
   UserComments: [Comments] @hasMany(indexName: "byUser", fields: ["id"])
   UserPosts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
 }
- 

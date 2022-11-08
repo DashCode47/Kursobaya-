@@ -22,7 +22,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Storage, Amplify } from "aws-amplify";
 
 Storage.configure({
-  bucket: "kursobaya-media81206-staging",
+  bucket: "kursobaya-storage",
   region: "eu-central-1",
 });
 
@@ -47,6 +47,7 @@ const AddPost = ({ plugSwitcher, switcher, block, refetch }) => {
       description: item.text,
       image: undefined,
       block,
+      type: "post",
       userID: user.attributes.sub,
     };
     if (image) {

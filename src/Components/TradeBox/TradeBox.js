@@ -16,6 +16,7 @@ import { updatePost } from "../../../Queries/Queries";
 import { Storage } from "aws-amplify";
 import { Entypo } from "@expo/vector-icons";
 import DeletePost from "../../Modals/deletePost";
+import { ActivityIndicator } from "react-native-paper";
 
 const { width } = Dimensions.get("screen");
 
@@ -26,12 +27,15 @@ const TradeBox = ({ data }) => {
   const [pressed, setpressed] = useState(false);
   const [imageURL, setimageURL] = useState(null);
   const [switcher, setswitcher] = useState(false);
+  const [loadingIMG, setloadingIMG] = useState(false);
   /* //////////////////////////////////////////////////getting MEDIA FROM S3 */
   useEffect(() => {
     dowloadMedia();
+    setloadingIMG(false);
   }, []);
 
   const dowloadMedia = async () => {
+    setloadingIMG(true);
     if (data.image) {
       const uri = await Storage.get(data.image);
       setimageURL(uri);
@@ -65,7 +69,9 @@ const TradeBox = ({ data }) => {
     else setlikes(likes - 1); */
   };
 
-  return (
+  return loadingIMG ? (
+    <ActivityIndicator />
+  ) : (
     <View
       style={{
         width,

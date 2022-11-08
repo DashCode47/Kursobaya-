@@ -49,7 +49,48 @@ export const createPost = gql`
     }
   }
 `;
-
+export const postsByType = gql`
+  query PostsByType(
+    $type: String!
+    $createdAt: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelPostFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    PostsByType(
+      type: $type
+      createdAt: $createdAt
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        title
+        description
+        image
+        nofLikes
+        nofComments
+        Comments {
+          nextToken
+          startedAt
+        }
+        block
+        userID
+        type
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const listPosts = gql`
   query ListPosts(
     $filter: ModelPostFilterInput

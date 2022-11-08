@@ -14,22 +14,26 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Auth } from "aws-amplify";
 import { TextInput } from "react-native-gesture-handler";
-import { useState, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@apollo/client";
 import { updateUser, getUser } from "../../Queries/Queries";
 
 const Settings = ({ plugSwitch, switcher, userData }) => {
-  const [username, setusername] = useState("user");
+  const [username, setusername] = useState("username");
   /* ///////////////////////////////////////MUTATION UPDATE USER //////////////////////*/
   const [doUpdate, { data, loading, error }] = useMutation(updateUser);
+
+  useEffect(() => {
+    setusername(queryuser?.getUser?.name);
+  }, []);
+
   const { data: queryuser } = useQuery(getUser, {
     variables: { id: userData.id },
   });
   const onUpdating = async () => {
     try {
       if (username !== queryuser?.getUser?.name) {
-        console.log(queryuser.getUser._version);
         await doUpdate({
           variables: {
             input: {

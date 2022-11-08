@@ -19,7 +19,11 @@
         "Kursobaya": {}
       },
       "storage": {
-        "storage": {}
+        "storage": {},
+        "kursobaya0fa9f60c": {
+          "bucketName": "kursobaya-storage",
+          "region": "eu-central-1"
+        }
       }
     }
   }

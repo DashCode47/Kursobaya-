@@ -5,7 +5,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TradeBox from "../../Components/TradeBox/TradeBox";
 import { AntDesign } from "@expo/vector-icons";
@@ -16,7 +16,7 @@ import { Entypo } from "@expo/vector-icons";
 const { width } = Dimensions.get("screen");
 import { useNavigation } from "@react-navigation/native";
 import { PublicContext } from "../../Context/Context";
-import { listPosts } from "../../../Queries/Queries";
+import { listPosts, postsByType } from "../../../Queries/Queries";
 import { useQuery } from "@apollo/client";
 import { ActivityIndicator } from "react-native-paper";
 
@@ -26,8 +26,10 @@ const Trade = ({ extraData }) => {
   const { dataA } = useContext(PublicContext);
   const { setdataA } = useContext(PublicContext);
 
-  const { loading, data, error, refetch } = useQuery(listPosts);
-  const posts = data?.listPosts?.items.filter((item) => !item._deleted);
+  const { loading, data, error, refetch } = useQuery(postsByType, {
+    variables: { type: "post", sortDirection: "DESC" },
+  });
+  const posts = data?.PostsByType?.items.filter((item) => !item._deleted);
   /* const modData = (item) => {
     setdataA([item, ...dataA]);
   };
@@ -35,6 +37,9 @@ const Trade = ({ extraData }) => {
   const plugSwitcher = (value) => {
     setswitcher(!value);
   };
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return loading ? (
     <ActivityIndicator

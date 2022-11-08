@@ -7,7 +7,7 @@ type CommentsMetaData = {
 }
 
 type PostMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+  readOnlyFields: 'updatedAt';
 }
 
 type UserMetaData = {
@@ -50,7 +50,8 @@ type EagerPost = {
   readonly Comments?: (Comments | null)[] | null;
   readonly block?: string | null;
   readonly userID: string;
-  readonly createdAt?: string | null;
+  readonly type: string;
+  readonly createdAt: string;
   readonly updatedAt?: string | null;
 }
 
@@ -64,7 +65,8 @@ type LazyPost = {
   readonly Comments: AsyncCollection<Comments>;
   readonly block?: string | null;
   readonly userID: string;
-  readonly createdAt?: string | null;
+  readonly type: string;
+  readonly createdAt: string;
   readonly updatedAt?: string | null;
 }
 

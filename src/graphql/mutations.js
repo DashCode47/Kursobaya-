@@ -88,6 +88,7 @@ export const createPost = /* GraphQL */ `
       }
       block
       userID
+      type
       createdAt
       updatedAt
       _version
@@ -126,6 +127,7 @@ export const updatePost = /* GraphQL */ `
       }
       block
       userID
+      type
       createdAt
       updatedAt
       _version
@@ -164,6 +166,7 @@ export const deletePost = /* GraphQL */ `
       }
       block
       userID
+      type
       createdAt
       updatedAt
       _version
@@ -206,6 +209,7 @@ export const createUser = /* GraphQL */ `
           nofComments
           block
           userID
+          type
           createdAt
           updatedAt
           _version
@@ -257,6 +261,7 @@ export const updateUser = /* GraphQL */ `
           nofComments
           block
           userID
+          type
           createdAt
           updatedAt
           _version
@@ -308,6 +313,7 @@ export const deleteUser = /* GraphQL */ `
           nofComments
           block
           userID
+          type
           createdAt
           updatedAt
           _version

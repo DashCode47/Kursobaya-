@@ -3,6 +3,7 @@ import { deletePost } from "../../Queries/Queries";
 import { useMutation } from "@apollo/client";
 import { useContext } from "react";
 import { PublicContext } from "../Context/Context";
+import { Storage } from "aws-amplify";
 
 const DeletePost = ({ onSwitch, switcher, data }) => {
   const { user } = useContext(PublicContext);
@@ -17,6 +18,9 @@ const DeletePost = ({ onSwitch, switcher, data }) => {
           },
         },
       });
+      if (data.image) {
+        await Storage.remove(data.image);
+      }
     } catch (e) {
       Alert.alert(e.message);
     }

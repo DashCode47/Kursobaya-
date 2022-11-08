@@ -35,6 +35,7 @@ const Comments = ({ route }) => {
 
   useEffect(() => {
     dowloadMedia();
+    refetch();
   }, []);
 
   const dowloadMedia = async () => {
@@ -48,9 +49,13 @@ const Comments = ({ route }) => {
     data: queryData,
     error: queryError,
     refetch,
-  } = useQuery(listComments, {
-    variables: { filter: { postID: { eq: data.id } } },
-  });
+  } = useQuery(
+    listComments,
+    {
+      variables: { filter: { postID: { eq: data.id } } },
+    },
+    refetch
+  );
   /* //////////////////////////////////////////////CREATE COMMENT MUTATION */
   const [onCreateComment, { data: commentData, loading, error }] =
     useMutation(createComments);

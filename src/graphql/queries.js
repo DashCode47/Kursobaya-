@@ -98,6 +98,7 @@ export const getPost = /* GraphQL */ `
       }
       block
       userID
+      type
       createdAt
       updatedAt
       _version
@@ -126,6 +127,7 @@ export const listPosts = /* GraphQL */ `
         }
         block
         userID
+        type
         createdAt
         updatedAt
         _version
@@ -163,6 +165,49 @@ export const syncPosts = /* GraphQL */ `
         }
         block
         userID
+        type
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const postsByType = /* GraphQL */ `
+  query PostsByType(
+    $type: String!
+    $createdAt: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelPostFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    PostsByType(
+      type: $type
+      createdAt: $createdAt
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        title
+        description
+        image
+        nofLikes
+        nofComments
+        Comments {
+          nextToken
+          startedAt
+        }
+        block
+        userID
+        type
         createdAt
         updatedAt
         _version
@@ -205,6 +250,7 @@ export const getUser = /* GraphQL */ `
           nofComments
           block
           userID
+          type
           createdAt
           updatedAt
           _version
