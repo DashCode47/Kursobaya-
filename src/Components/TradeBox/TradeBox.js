@@ -5,16 +5,66 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
-import { SimpleLineIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useMutation } from "@apollo/client";
+import { updatePost } from "../../../Queries/Queries";
+import { Storage } from "aws-amplify";
+import { Entypo } from "@expo/vector-icons";
+import DeletePost from "../../Modals/deletePost";
+
 const { width } = Dimensions.get("screen");
 
 const TradeBox = ({ data }) => {
   const navigation = useNavigation();
+  const [onUpdatePost, { loading, data: postData, error }] =
+    useMutation(updatePost);
+  const [pressed, setpressed] = useState(false);
+  const [imageURL, setimageURL] = useState(null);
+  const [switcher, setswitcher] = useState(false);
+  /* //////////////////////////////////////////////////getting MEDIA FROM S3 */
+  useEffect(() => {
+    dowloadMedia();
+  }, []);
+
+  const dowloadMedia = async () => {
+    if (data.image) {
+      const uri = await Storage.get(data.image);
+      setimageURL(uri);
+    }
+  };
+  /* ///////////////////////////////////////////////////////////////////////// */
+  const onSwitcher = (value) => {
+    setswitcher(!value);
+  };
+
+  const updatingPost = async (item) => {
+    try {
+      const response = await onUpdatePost({
+        variables: {
+          input: {
+            id: data.id,
+            nofLikes: !pressed ? data.nofLikes + 1 : data.nofLikes - 1,
+            _version: data._version,
+          },
+        },
+      });
+    } catch (e) {
+      Alert.alert(e.message);
+    }
+  };
+
+  const setnofLikes = () => {
+    setpressed(!pressed);
+    updatingPost();
+    /* if (!pressed) setlikes(likes + 1);
+    else setlikes(likes - 1); */
+  };
+
   return (
     <View
       style={{
@@ -24,45 +74,57 @@ const TradeBox = ({ data }) => {
         marginBottom: 10,
       }}
     >
+      <DeletePost onSwitch={onSwitcher} switcher={switcher} data={data} />
       <TouchableOpacity
         onPress={() => navigation.navigate("Comments", { data: data })}
       >
-        <Text style={styles.block}>{data.block}</Text>
+        <Entypo
+          name="dots-three-horizontal"
+          size={24}
+          color="black"
+          style={styles.dots}
+          onPress={() => onSwitcher(false)}
+        />
+        {/* <Text style={styles.block}>{data.block}</Text> */}
         <Text style={styles.title} numberOfLines={2}>
-          {data.header}
+          {data.title}
         </Text>
-        {data.text && (
+        {data.description && (
           <Text style={styles.description} numberOfLines={3}>
-            {data.text}
+            {data.description}
           </Text>
         )}
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {data.image && (
-            <Image
-              source={{ uri: data.image }}
-              style={{ width, height: 200 }}
-            />
+          {imageURL && (
+            <Image source={{ uri: imageURL }} style={{ width, height: 200 }} />
           )}
         </View>
       </TouchableOpacity>
-
+      {/*  ////////////////////////////////////////////N~ LIKES AND COMMENTS ////////////*/}
       <View style={styles.iconBar}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <MaterialCommunityIcons
             name="arrow-up-bold-outline"
             size={26}
-            color="black"
+            color={pressed ? "orange" : "black"}
+            onPress={setnofLikes}
           />
-          <Text style={{ fontSize: 17 }}>250</Text>
+
+          <Text style={{ fontSize: 17 }}>{data.nofLikes}</Text>
+
           <MaterialCommunityIcons
             name="arrow-down-bold-outline"
             size={26}
             color="black"
+            onPress={setnofLikes}
           />
         </View>
+
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Octicons name="comment-discussion" size={24} color="black" />
-          <Text style={{ fontSize: 18, paddingLeft: 7 }}>350</Text>
+          <Text style={{ fontSize: 18, paddingLeft: 7 }}>
+            {data.nofComments || "0"}
+          </Text>
         </View>
 
         <View
@@ -72,8 +134,9 @@ const TradeBox = ({ data }) => {
             paddingVertical: 10,
           }}
         >
-          <SimpleLineIcons name="share" size={24} color="black" />
-          <Text style={{ fontSize: 18, paddingLeft: 7 }}>поделиться</Text>
+          {/* <SimpleLineIcons name="share" size={24} color="black" /> */}
+          <Text style={styles.block}>{data.block}</Text>
+          {/*  <Text style={{ fontSize: 18, paddingLeft: 7 }}>удалить</Text> */}
         </View>
       </View>
     </View>
@@ -100,5 +163,11 @@ const styles = StyleSheet.create({
     right: 1,
     fontWeight: "bold",
     color: "#acacac",
+  },
+  dots: {
+    position: "absolute",
+    top: 0,
+    right: 1,
+    zIndex: 1,
   },
 });

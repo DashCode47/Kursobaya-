@@ -16,31 +16,31 @@ import { Entypo } from "@expo/vector-icons";
 const { width } = Dimensions.get("screen");
 import { useNavigation } from "@react-navigation/native";
 import { PublicContext } from "../../Context/Context";
-
-/* const data = [
-  {
-    title:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has",
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to mak",
-  },
-]; */
+import { listPosts } from "../../../Queries/Queries";
+import { useQuery } from "@apollo/client";
+import { ActivityIndicator } from "react-native-paper";
 
 const Trade = ({ extraData }) => {
   const navigation = useNavigation();
   const [switcher, setswitcher] = useState(false);
   const { dataA } = useContext(PublicContext);
   const { setdataA } = useContext(PublicContext);
-  /* const [data, setdata] = useState([]); */
-  const modData = (item) => {
+
+  const { loading, data, error, refetch } = useQuery(listPosts);
+  const posts = data?.listPosts?.items.filter((item) => !item._deleted);
+  /* const modData = (item) => {
     setdataA([item, ...dataA]);
   };
-
+ */
   const plugSwitcher = (value) => {
     setswitcher(!value);
   };
 
-  return (
+  return loading ? (
+    <ActivityIndicator
+      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+    />
+  ) : (
     <LinearGradient
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
@@ -50,8 +50,8 @@ const Trade = ({ extraData }) => {
       <AddPost
         plugSwitcher={plugSwitcher}
         switcher={switcher}
-        modData={modData}
         block={extraData}
+        refetch={refetch}
       />
 
       <View
@@ -77,8 +77,10 @@ const Trade = ({ extraData }) => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={dataA}
+        data={posts}
         renderItem={({ item }) => <TradeBox data={item} />}
+        onRefresh={refetch}
+        refreshing={loading}
       />
     </LinearGradient>
   );

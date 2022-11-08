@@ -1,0 +1,27 @@
+type Comments @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  text: String
+  image: String
+  postID: ID! @index(name: "byPost")
+  userID: ID! @index(name: "byUser")
+}
+
+type Post @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  title: String
+  description: String
+  image: String
+  nofLikes: Int
+  nofComments: Int
+  Comments: [Comments] @hasMany(indexName: "byPost", fields: ["id"])
+  block: String
+  userID: ID! @index(name: "byUser")
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  UserComments: [Comments] @hasMany(indexName: "byUser", fields: ["id"])
+  UserPosts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
+}
+ 

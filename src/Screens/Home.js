@@ -11,7 +11,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Auth } from "aws-amplify";
+import { Ionicons } from "@expo/vector-icons";
+import Settings from "../Modals/Settings";
+import { useState } from "react";
 const { width, height } = Dimensions.get("screen");
 
 const dum1 = "../../assets/images/buildingB.jpg";
@@ -27,8 +31,15 @@ const data = [
 const imageW = width * 0.7;
 const imageH = imageW * 1.54;
 
-const Home = () => {
+const Home = ({ route }) => {
   const navigation = useNavigation();
+  const userData = route.params?.user?.getUser;
+  const [switcher, setswitcher] = useState(false);
+
+  const plugSwitch = (value) => {
+    setswitcher(!value);
+  };
+
   const onPressBtn = async () => {
     try {
       await AsyncStorage.removeItem("boarded");
@@ -36,11 +47,16 @@ const Home = () => {
       console.log("Error @setItem: ", err);
     }
   };
+
   const scrollX = React.useRef(new Animated.Value(0)).current;
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <StatusBar hidden />
-
+      <Settings
+        switcher={switcher}
+        plugSwitch={plugSwitch}
+        userData={userData}
+      />
       <View style={StyleSheet.absoluteFillObject}>
         {data.map((image, index) => {
           const inputRange = [
@@ -66,6 +82,14 @@ const Home = () => {
           );
         })}
       </View>
+
+      <Ionicons
+        name="settings"
+        size={32}
+        color="black"
+        style={styles.settings}
+        onPress={() => plugSwitch(false)}
+      />
 
       <Animated.FlatList
         data={data}
@@ -120,6 +144,12 @@ const styles = StyleSheet.create({
     height: imageH,
     resizeMode: "cover",
     borderRadius: 16,
+  },
+  settings: {
+    position: "absolute",
+    right: 15,
+    top: 20,
+    zIndex: 1,
   },
 });
 
