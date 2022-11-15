@@ -198,6 +198,21 @@ export const onCreateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      UserMessages {
+        items {
+          id
+          text
+          createdAt
+          chatroomID
+          userID
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -239,6 +254,21 @@ export const onUpdateUser = /* GraphQL */ `
           userID
           type
           createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      UserMessages {
+        items {
+          id
+          text
+          createdAt
+          chatroomID
+          userID
           updatedAt
           _version
           _deleted
@@ -296,7 +326,157 @@ export const onDeleteUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      UserMessages {
+        items {
+          id
+          text
+          createdAt
+          chatroomID
+          userID
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
       createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onCreateChatRoom = /* GraphQL */ `
+  subscription OnCreateChatRoom($filter: ModelSubscriptionChatRoomFilterInput) {
+    onCreateChatRoom(filter: $filter) {
+      id
+      block
+      name
+      image
+      Messages {
+        items {
+          id
+          text
+          createdAt
+          chatroomID
+          userID
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateChatRoom = /* GraphQL */ `
+  subscription OnUpdateChatRoom($filter: ModelSubscriptionChatRoomFilterInput) {
+    onUpdateChatRoom(filter: $filter) {
+      id
+      block
+      name
+      image
+      Messages {
+        items {
+          id
+          text
+          createdAt
+          chatroomID
+          userID
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteChatRoom = /* GraphQL */ `
+  subscription OnDeleteChatRoom($filter: ModelSubscriptionChatRoomFilterInput) {
+    onDeleteChatRoom(filter: $filter) {
+      id
+      block
+      name
+      image
+      Messages {
+        items {
+          id
+          text
+          createdAt
+          chatroomID
+          userID
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onCreateMessages = /* GraphQL */ `
+  subscription OnCreateMessages($filter: ModelSubscriptionMessagesFilterInput) {
+    onCreateMessages(filter: $filter) {
+      id
+      text
+      createdAt
+      chatroomID
+      userID
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateMessages = /* GraphQL */ `
+  subscription OnUpdateMessages($filter: ModelSubscriptionMessagesFilterInput) {
+    onUpdateMessages(filter: $filter) {
+      id
+      text
+      createdAt
+      chatroomID
+      userID
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteMessages = /* GraphQL */ `
+  subscription OnDeleteMessages($filter: ModelSubscriptionMessagesFilterInput) {
+    onDeleteMessages(filter: $filter) {
+      id
+      text
+      createdAt
+      chatroomID
+      userID
       updatedAt
       _version
       _deleted

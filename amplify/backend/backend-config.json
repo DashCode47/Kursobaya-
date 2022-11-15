@@ -47,13 +47,5 @@
         ]
       }
     }
-  },
-  "storage": {
-    "kursobaya0fa9f60c": {
-      "service": "S3",
-      "serviceType": "imported",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": []
-    }
   }
 }

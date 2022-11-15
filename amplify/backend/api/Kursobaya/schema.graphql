@@ -30,4 +30,27 @@ type User @model @auth(rules: [{ allow: public }]) {
   name: String
   UserComments: [Comments] @hasMany(indexName: "byUser", fields: ["id"])
   UserPosts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
+  UserMessages: [Messages] @hasMany(indexName: "byUser", fields: ["id"])
 }
+
+type ChatRoom @model @auth(rules: [{ allow: public }]) {
+  id: ID!
+  block: String!
+  name: String
+  image: String
+  Messages: [Messages] @hasMany(indexName: "byChatRoom", fields: ["id"])
+}
+
+type Messages @model @auth(rules: [{ allow: public }]) {
+  id: ID!
+  text: String
+  createdAt: AWSDateTime!
+  chatroomID: ID!
+    @index(
+      name: "byChatRoom"
+      sortKeyFields: ["createdAt"]
+      queryField: "listMessagesByChatRoom"
+    )
+  userID: ID! @index(name: "byUser")
+}
+ 
