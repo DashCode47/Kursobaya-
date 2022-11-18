@@ -17,7 +17,10 @@ import { Storage } from "aws-amplify";
 import { Entypo } from "@expo/vector-icons";
 import DeletePost from "../../Modals/deletePost";
 import { ActivityIndicator } from "react-native-paper";
-
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { LinearGradient } from "expo-linear-gradient";
+dayjs.extend(relativeTime);
 const { width } = Dimensions.get("screen");
 
 const TradeBox = ({ data }) => {
@@ -69,17 +72,10 @@ const TradeBox = ({ data }) => {
     else setlikes(likes - 1); */
   };
 
-  return loadingIMG ? (
+  return loadingIMG && imageURL ? (
     <ActivityIndicator />
   ) : (
-    <View
-      style={{
-        width,
-        backgroundColor: "white",
-        paddingHorizontal: 24,
-        marginBottom: 10,
-      }}
-    >
+    <View style={styles.container}>
       <DeletePost onSwitch={onSwitcher} switcher={switcher} data={data} />
       <TouchableOpacity
         onPress={() => navigation.navigate("Comments", { data: data })}
@@ -95,6 +91,9 @@ const TradeBox = ({ data }) => {
         <Text style={styles.title} numberOfLines={2}>
           {data.title}
         </Text>
+        <Text style={styles.date} numberOfLines={2}>
+          {dayjs(data.createdAt).fromNow(true) + " ago"}
+        </Text>
         {data.description && (
           <Text style={styles.description} numberOfLines={3}>
             {data.description}
@@ -102,7 +101,16 @@ const TradeBox = ({ data }) => {
         )}
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           {imageURL && (
-            <Image source={{ uri: imageURL }} style={{ width, height: 200 }} />
+            <Image
+              source={{ uri: imageURL }}
+              style={{
+                width: width * 0.93,
+                height: 300,
+                borderTopLeftRadius: 25,
+                borderTopRightRadius: 25,
+                paddingHorizontal: 24,
+              }}
+            />
           )}
         </View>
       </TouchableOpacity>
@@ -152,16 +160,46 @@ const TradeBox = ({ data }) => {
 export default TradeBox;
 
 const styles = StyleSheet.create({
+  container: {
+    paddingTop: 10,
+    width: width * 0.95,
+    marginBottom: 10,
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    backgroundColor: "white",
+    elevation: 11,
+    borderWidth: 1,
+    borderColor: "black",
+  },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "left",
-    marginBottom: 5,
+    paddingHorizontal: 24,
+    color: "black",
   },
-  description: { fontSize: 14 },
+  date: {
+    fontSize: 12,
+    marginBottom: 5,
+    color: "black",
+    paddingHorizontal: 24,
+  },
+  description: { fontSize: 16, paddingHorizontal: 24, marginBottom: 15 },
   iconBar: {
     flexDirection: "row",
     justifyContent: "space-between",
+    backgroundColor: "white",
+    width: "100%",
+    borderBottomEndRadius: 25,
+    borderBottomStartRadius: 25,
+    paddingHorizontal: 22,
+    paddingVertical: 5,
   },
   block: {
     position: "absolute",
@@ -172,8 +210,11 @@ const styles = StyleSheet.create({
   },
   dots: {
     position: "absolute",
-    top: 0,
-    right: 1,
+    top: 10,
+    right: 20,
     zIndex: 1,
+    backgroundColor: "gray",
+    borderRadius: 25,
+    padding: 5,
   },
 });

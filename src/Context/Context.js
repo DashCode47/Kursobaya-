@@ -9,6 +9,8 @@ const Context = (props) => {
   const [dataG, setdataG] = useState([]);
   const [dataV, setdataV] = useState([]);
   const [user, setuser] = useState();
+  const [badge, setbadge] = useState(0);
+  const [messages, setmessages] = useState([]);
 
   /* GET AUTH USER */
   useEffect(() => {
@@ -36,6 +38,8 @@ const Context = (props) => {
         dataG,
         setdataG,
         user,
+        badge,
+        setbadge,
       }}
     >
       {props.children}

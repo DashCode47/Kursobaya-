@@ -2,6 +2,10 @@ import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
 
+type MessagesMetaData = {
+  readOnlyFields: 'updatedAt';
+}
+
 type CommentsMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -14,12 +18,32 @@ type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type MessagesMetaData = {
-  readOnlyFields: 'updatedAt';
-}
-
 type ChatRoomMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+type EagerMessages = {
+  readonly id: string;
+  readonly text?: string | null;
+  readonly createdAt: string;
+  readonly chatroomID: string;
+  readonly userID: string;
+  readonly updatedAt?: string | null;
+}
+
+type LazyMessages = {
+  readonly id: string;
+  readonly text?: string | null;
+  readonly createdAt: string;
+  readonly chatroomID: string;
+  readonly userID: string;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Messages = LazyLoading extends LazyLoadingDisabled ? EagerMessages : LazyMessages
+
+export declare const Messages: (new (init: ModelInit<Messages, MessagesMetaData>) => Messages) & {
+  copyOf(source: Messages, mutator: (draft: MutableModel<Messages, MessagesMetaData>) => MutableModel<Messages, MessagesMetaData> | void): Messages;
 }
 
 type EagerComments = {
@@ -108,30 +132,6 @@ export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser :
 
 export declare const User: (new (init: ModelInit<User, UserMetaData>) => User) & {
   copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
-}
-
-type EagerMessages = {
-  readonly id: string;
-  readonly text?: string | null;
-  readonly createdAt: string;
-  readonly chatroomID: string;
-  readonly userID: string;
-  readonly updatedAt?: string | null;
-}
-
-type LazyMessages = {
-  readonly id: string;
-  readonly text?: string | null;
-  readonly createdAt: string;
-  readonly chatroomID: string;
-  readonly userID: string;
-  readonly updatedAt?: string | null;
-}
-
-export declare type Messages = LazyLoading extends LazyLoadingDisabled ? EagerMessages : LazyMessages
-
-export declare const Messages: (new (init: ModelInit<Messages, MessagesMetaData>) => Messages) & {
-  copyOf(source: Messages, mutator: (draft: MutableModel<Messages, MessagesMetaData>) => MutableModel<Messages, MessagesMetaData> | void): Messages;
 }
 
 type EagerChatRoom = {

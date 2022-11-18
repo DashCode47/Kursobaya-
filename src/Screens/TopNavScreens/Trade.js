@@ -4,6 +4,7 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -49,7 +50,7 @@ const Trade = ({ extraData }) => {
     <LinearGradient
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      colors={["#3b5998", "#192f6a"]}
+      colors={["#D6E9FF", "#E6EBF0"]}
       style={styles.container}
     >
       <AddPost
@@ -78,7 +79,10 @@ const Trade = ({ extraData }) => {
           <Text style={styles.title}>{extraData}</Text>
         </View>
         <TouchableOpacity onPress={() => plugSwitcher(false)}>
-          <AntDesign name="plussquareo" size={40} color="black" />
+          <Image
+            source={require("../../../assets/images/add.png")}
+            style={styles.add}
+          />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -86,6 +90,7 @@ const Trade = ({ extraData }) => {
         renderItem={({ item }) => <TradeBox data={item} />}
         onRefresh={refetch}
         refreshing={loading}
+        showsVerticalScrollIndicator={false}
       />
     </LinearGradient>
   );
@@ -109,7 +114,7 @@ const styles = StyleSheet.create({
     paddingBottom: 7,
   },
   contTitle: {
-    backgroundColor: "teal",
+    backgroundColor: "#67A7DD",
     borderBottomRightRadius: 15,
     borderTopRightRadius: 15,
     width: "50%",
@@ -118,5 +123,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
     flexDirection: "row",
+    borderWidth: 1,
+  },
+  add: {
+    height: 50,
+    width: 50,
   },
 });

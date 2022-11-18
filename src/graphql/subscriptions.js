@@ -1,6 +1,21 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onNewMessagebyChatRoomID = /* GraphQL */ `
+  subscription OnNewMessagebyChatRoomID($chatroomID: ID!) {
+    onNewMessagebyChatRoomID(chatroomID: $chatroomID) {
+      id
+      text
+      createdAt
+      chatroomID
+      userID
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const onCreateComments = /* GraphQL */ `
   subscription OnCreateComments($filter: ModelSubscriptionCommentsFilterInput) {
     onCreateComments(filter: $filter) {

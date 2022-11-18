@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Modal, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import { deletePost } from "../../Queries/Queries";
 import { useMutation } from "@apollo/client";
 import { useContext } from "react";
@@ -41,7 +48,7 @@ const DeletePost = ({ onSwitch, switcher, data }) => {
   };
   return (
     <Modal visible={switcher} transparent={true} animationType="slide">
-      <View style={styles.container}>
+      <TouchableOpacity style={styles.container} onPress={() => onSwitch(true)}>
         <View style={styles.subcontainer}>
           {user.attributes.sub === data.userID && (
             <Text style={styles.txt} onPress={() => alert()}>
@@ -52,7 +59,7 @@ const DeletePost = ({ onSwitch, switcher, data }) => {
             Cancel
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     </Modal>
   );
 };

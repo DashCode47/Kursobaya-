@@ -23,9 +23,26 @@ const link = ApolloLink.from([
   createSubscriptionHandshakeLink({ url, region, auth }, httpLink),
 ]);
 
+const typePolicies = {
+  Query: {
+    fields: {
+      listMessagesByChatRoom: {
+        keyArgs: ["chatroomID", "createdAt", "sortDirection", "filter"], //PARAMETROS QUE HACEN UNICO AL ELEMENTO(ES DEIR TODOS MENOS TOKEN Y LIMIT)
+        merge: (existing = {}, incoming) => {
+          return {
+            ...existing,
+            ...incoming,
+            items: [...(existing.items || []), ...incoming.items],
+          };
+        },
+      },
+    },
+  },
+};
+
 const client = new ApolloClient({
   link,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({ typePolicies }),
 });
 
 const Client = ({ children }) => {

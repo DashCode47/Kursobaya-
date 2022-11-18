@@ -278,3 +278,19 @@ export const onCreateMessages = gql`
     }
   }
 `;
+
+export const onNewMessagebyChatRoomID = gql`
+  subscription OnNewMessagebyChatRoomID($chatroomID: ID!) {
+    onNewMessagebyChatRoomID(chatroomID: $chatroomID) {
+      id
+      text
+      createdAt
+      chatroomID
+      userID
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
