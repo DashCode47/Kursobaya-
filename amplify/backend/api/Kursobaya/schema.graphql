@@ -58,4 +58,4 @@ type Subscription {
   onNewMessagebyChatRoomID(chatroomID: ID!): Messages
     @aws_subscribe(mutations: ["createMessages"])
 }
-  
+   
