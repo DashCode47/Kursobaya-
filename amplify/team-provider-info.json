@@ -47,5 +47,12 @@
         "Kursobaya": {}
       }
     }
+  },
+  "prod": {
+    "categories": {
+      "auth": {
+        "Kursobaya": {}
+      }
+    }
   }
 }
