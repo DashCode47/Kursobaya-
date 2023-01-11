@@ -26,5 +26,12 @@
         }
       }
     }
+  },
+  "dev": {
+    "categories": {
+      "auth": {
+        "Kursobaya": {}
+      }
+    }
   }
 }
