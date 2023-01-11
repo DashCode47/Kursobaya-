@@ -26,5 +26,26 @@
         }
       }
     }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-kursobaya-dev-120638-authRole",
+      "UnauthRoleArn": "arn:aws:iam::566870465264:role/amplify-kursobaya-dev-120638-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::566870465264:role/amplify-kursobaya-dev-120638-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-kursobaya-dev-120638-deployment",
+      "UnauthRoleName": "amplify-kursobaya-dev-120638-unauthRole",
+      "StackName": "amplify-kursobaya-dev-120638",
+      "StackId": "arn:aws:cloudformation:eu-central-1:566870465264:stack/amplify-kursobaya-dev-120638/44d5da50-918f-11ed-92c9-0a19bffb5b34",
+      "AmplifyAppId": "do739kgxpc7y9"
+    },
+    "categories": {
+      "auth": {
+        "Kursobaya": {}
+      },
+      "api": {
+        "Kursobaya": {}
+      }
+    }
   }
 }
