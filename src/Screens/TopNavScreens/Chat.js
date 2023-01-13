@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
 import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import CajaComment from "../../Components/CajaComment/CajaComment";
 import {
@@ -25,10 +24,10 @@ const Chat = ({ route }) => {
   const [isfetchingMore, setisfetchingMore] = useState(false);
   /* /////////////////////////////////////////////CHECK BLOCK /////////////////////////////// */
   const checkBlock = () => {
-    if (block === "БЛОК B") setblockId("3f0ee7ac-6431-4b49-9851-845dd157bb3b");
-    if (block === "БЛОК A") setblockId("19a58b2c-ca81-4265-958d-cdf2b5a71d25");
-    if (block === "БЛОК Б") setblockId("a03bf14a-6c2e-4fc3-b4cd-b318e71aafdc");
-    if (block === "БЛОК Г") setblockId("5982865d-988e-4343-9994-679b1836012e");
+    if (block === "БЛОК B") setblockId("26242733-dd86-426e-98f5-d156521efd2e");
+    if (block === "БЛОК A") setblockId("c14f8295-d49e-4c08-865f-b8210b28dff3");
+    if (block === "БЛОК Б") setblockId("27255eb3-264f-45cc-a074-e9a2e2804402");
+    if (block === "БЛОК Г") setblockId("dff89715-f49c-40d6-b1e3-09c3851c980f");
   };
 
   /* //////////////////////////////////////////////////////////// */
