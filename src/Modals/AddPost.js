@@ -7,6 +7,7 @@ import {
   TextInput,
   Image,
   Dimensions,
+  Alert,
 } from "react-native";
 import React, { useState, useContext } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -16,14 +17,70 @@ import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { PublicContext } from "../Context/Context";
+import { createPost, listPosts } from "../../Queries/Queries";
+import { useMutation, useQuery } from "@apollo/client";
+import { Storage, Amplify } from "aws-amplify";
+
+Storage.configure({
+  bucket: "kursobaya-storage",
+  region: "eu-central-1",
+});
+
 const { width } = Dimensions.get("screen");
 
-const AddPost = ({ plugSwitcher, switcher, modData, block }) => {
+const AddPost = ({ plugSwitcher, switcher, block, refetch }) => {
   const [image, setImage] = useState(null);
+  const [submitting, setsubmitting] = useState(false);
   const [text, setText] = useState("");
   const [active, setActive] = useState(false);
   const [header, setheader] = useState("");
-  const [onWriting, setonWriting] = useState(false);
+  const { user } = useContext(PublicContext);
+
+  /* ///////////////////////////////////////////create post /////////////////// */
+  const [onCreatePosst, { loading, data, error }] = useMutation(createPost);
+
+  const creating = async (item) => {
+    if (submitting) return;
+    setsubmitting(true);
+    const input = {
+      title: item.header,
+      description: item.text,
+      image: undefined,
+      block,
+      type: "post",
+      userID: user.attributes.sub,
+    };
+    if (image) {
+      const imageKey = await uploadMedia(image);
+      input.image = imageKey;
+    }
+
+    try {
+      await onCreatePosst({
+        variables: {
+          input,
+        },
+      });
+      setsubmitting(false);
+      refetch();
+    } catch (e) {
+      Alert.alert(e.message);
+      setsubmitting(false);
+    }
+  };
+  const uploadMedia = async (uri) => {
+    try {
+      /* transfomr uri to format to upload to s3 */
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      /* oce trasnformed, we upload to S3 */
+      const s3Response = await Storage.put(`${Math.random()}.png`, blob);
+      return s3Response.key;
+    } catch (e) {
+      Alert.alert("image not uploaded", e.message);
+    }
+  };
+  /* ////////////////////////////////////////////////////////////////////////// */
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -61,7 +118,8 @@ const AddPost = ({ plugSwitcher, switcher, modData, block }) => {
       block,
       key: Math.random().toString(),
     };
-    modData(item);
+    creating(item);
+    /* modData(postData.listPosts.items); */
     setImage(null);
     setheader("");
     setText("");

@@ -4,8 +4,9 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from "react-native";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TradeBox from "../../Components/TradeBox/TradeBox";
 import { AntDesign } from "@expo/vector-icons";
@@ -16,42 +17,47 @@ import { Entypo } from "@expo/vector-icons";
 const { width } = Dimensions.get("screen");
 import { useNavigation } from "@react-navigation/native";
 import { PublicContext } from "../../Context/Context";
-
-/* const data = [
-  {
-    title:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has",
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to mak",
-  },
-]; */
+import { listPosts, postsByType } from "../../../Queries/Queries";
+import { useQuery } from "@apollo/client";
+import { ActivityIndicator } from "react-native-paper";
 
 const Trade = ({ extraData }) => {
   const navigation = useNavigation();
   const [switcher, setswitcher] = useState(false);
   const { dataA } = useContext(PublicContext);
   const { setdataA } = useContext(PublicContext);
-  /* const [data, setdata] = useState([]); */
-  const modData = (item) => {
+
+  const { loading, data, error, refetch } = useQuery(postsByType, {
+    variables: { type: "post", sortDirection: "DESC" },
+  });
+  const posts = data?.PostsByType?.items.filter((item) => !item._deleted);
+  /* const modData = (item) => {
     setdataA([item, ...dataA]);
   };
-
+ */
   const plugSwitcher = (value) => {
     setswitcher(!value);
   };
+  useEffect(() => {
+    refetch();
+  }, []);
 
-  return (
+  return loading ? (
+    <ActivityIndicator
+      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+    />
+  ) : (
     <LinearGradient
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      colors={["#3b5998", "#192f6a"]}
+      colors={["#D6E9FF", "#E6EBF0"]}
       style={styles.container}
     >
       <AddPost
         plugSwitcher={plugSwitcher}
         switcher={switcher}
-        modData={modData}
         block={extraData}
+        refetch={refetch}
       />
 
       <View
@@ -73,12 +79,18 @@ const Trade = ({ extraData }) => {
           <Text style={styles.title}>{extraData}</Text>
         </View>
         <TouchableOpacity onPress={() => plugSwitcher(false)}>
-          <AntDesign name="plussquareo" size={40} color="black" />
+          <Image
+            source={require("../../../assets/images/add.png")}
+            style={styles.add}
+          />
         </TouchableOpacity>
       </View>
       <FlatList
-        data={dataA}
+        data={posts}
         renderItem={({ item }) => <TradeBox data={item} />}
+        onRefresh={refetch}
+        refreshing={loading}
+        showsVerticalScrollIndicator={false}
       />
     </LinearGradient>
   );
@@ -102,7 +114,7 @@ const styles = StyleSheet.create({
     paddingBottom: 7,
   },
   contTitle: {
-    backgroundColor: "teal",
+    backgroundColor: "#67A7DD",
     borderBottomRightRadius: 15,
     borderTopRightRadius: 15,
     width: "50%",
@@ -111,5 +123,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
     flexDirection: "row",
+    borderWidth: 1,
+  },
+  add: {
+    height: 50,
+    width: 50,
   },
 });

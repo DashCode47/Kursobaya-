@@ -7,24 +7,88 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import CommentBox from "../Components/CommentBox/CommentBox";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  createComments,
+  listComments,
+  updatePost,
+} from "../../Queries/Queries";
+import { PublicContext } from "../Context/Context";
+import { Storage } from "aws-amplify";
 const { width } = Dimensions.get("screen");
 
 const Comments = ({ route }) => {
   const { data } = route.params;
+
   const [comment, setcomment] = useState("");
-  const [comments, setcomments] = useState([]);
-  const commentsArray = () => {
-    setcomments([...comments, comment]);
-    console.log(comments);
-    setcomment("");
+  const [imageURL, setimageURL] = useState(null);
+  const { user } = useContext(PublicContext);
+  const [Imheight, setheight] = useState();
+
+  useEffect(() => {
+    dowloadMedia();
+    refetch();
+  }, []);
+
+  const dowloadMedia = async () => {
+    if (data.image) {
+      const uri = await Storage.get(data.image);
+      setimageURL(uri);
+    }
   };
+
+  const {
+    data: queryData,
+    error: queryError,
+    refetch,
+  } = useQuery(
+    listComments,
+    {
+      variables: { filter: { postID: { eq: data.id } } },
+    },
+    refetch
+  );
+  /* //////////////////////////////////////////////CREATE COMMENT MUTATION */
+  const [onCreateComment, { data: commentData, loading, error }] =
+    useMutation(createComments);
+  const [onUpdatenofComments, { loading: comLoad }] = useMutation(updatePost);
+  const creatingComment = async () => {
+    try {
+      if (comment !== "") {
+        const response = await onCreateComment({
+          variables: {
+            input: {
+              postID: data.id,
+              text: comment,
+              userID: user.attributes.sub,
+            },
+          },
+        });
+        await onUpdatenofComments({
+          variables: {
+            input: {
+              id: data.id,
+              _version: data._version,
+              nofComments: data.nofComments + 1,
+            },
+          },
+        });
+        refetch();
+        setcomment("");
+      }
+    } catch (e) {
+      Alert.alert("Error creating Comment", e.message);
+    }
+  };
+  /* //////////////////////////////////////////////////////////////////////// */
 
   return (
     <View style={styles.container}>
@@ -37,18 +101,19 @@ const Comments = ({ route }) => {
         }}
       >
         <Text style={styles.title} numberOfLines={2}>
-          {data.header}
+          {data.title}
         </Text>
-        {data.text && (
+        {data.description && (
           <Text style={styles.description} numberOfLines={3}>
-            {data.text}
+            {data.description}
           </Text>
         )}
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {data.image && (
+          {imageURL && (
             <Image
-              source={{ uri: data.image }}
-              style={{ width, height: 200 }}
+              source={{ uri: imageURL }}
+              style={{ width, aspectRatio: 1 }}
+              resizeMode="cover"
             />
           )}
         </View>
@@ -60,7 +125,7 @@ const Comments = ({ route }) => {
               size={26}
               color="black"
             />
-            <Text style={{ fontSize: 17 }}>250</Text>
+            <Text style={{ fontSize: 17 }}>{data.nofLikes}</Text>
             <MaterialCommunityIcons
               name="arrow-down-bold-outline"
               size={26}
@@ -69,7 +134,9 @@ const Comments = ({ route }) => {
           </View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Octicons name="comment-discussion" size={24} color="black" />
-            <Text style={{ fontSize: 18, paddingLeft: 7 }}>350</Text>
+            <Text style={{ fontSize: 18, paddingLeft: 7 }}>
+              {data.nofComments}
+            </Text>
           </View>
 
           <View
@@ -86,9 +153,11 @@ const Comments = ({ route }) => {
       </View>
       {/* /////////////////////////////////////////////////////END BOX */}
       <FlatList
-        data={comments}
+        data={queryData?.listComments?.items || []}
         renderItem={({ item }) => <CommentBox data={item} />}
       />
+
+      {/* ///////////////////////////////INPUT COMMMENT BOX/////////////// */}
       <View style={styles.cajacommnt}>
         <View style={[styles.lowBar, { width: width - 54 }]}>
           <TextInput
@@ -98,7 +167,7 @@ const Comments = ({ route }) => {
             multiline={true}
           />
         </View>
-        <TouchableOpacity onPress={() => commentsArray()}>
+        <TouchableOpacity onPress={creatingComment}>
           <MaterialIcons name="send" size={32} color="blue" />
         </TouchableOpacity>
       </View>
@@ -141,5 +210,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     marginBottom: 10,
+    backgroundColor: "white",
+    width: "100%",
+    paddingTop: 4,
   },
 });
