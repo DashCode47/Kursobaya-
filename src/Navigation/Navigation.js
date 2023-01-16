@@ -8,7 +8,7 @@ import Comments from "../Screens/Comments";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createUser, getUser } from "../../Queries/Queries";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import { PublicContext } from "../Context/Context";
 const Stack = createNativeStackNavigator();
 
@@ -30,11 +30,11 @@ const Navigation = () => {
   const { user } = useContext(PublicContext);
   const [loaded, setloading] = useState(true);
   const [firstTime, setFirstTime] = useState(false);
+  //CREATE NEW USER
   const [OncreateUser, { loading: onLoad, error: onError }] =
     useMutation(createUser);
-  const { data, loading, error } = useQuery(getUser, {
-    variables: { id: user.attributes.sub },
-  });
+  //GET USER FROM DB IF EXISTS
+  const [getLazyUser, { data, loading, error }] = useLazyQuery(getUser);
 
   const checkOnboarding = async () => {
     const response = await AsyncStorage.getItem("boarded");
@@ -49,13 +49,14 @@ const Navigation = () => {
     /* CHECK USER IN DATABASE */
 
     try {
-      if (data?.getUser) {
-        console.log("user already exists");
-      }
-      if (!loading && !data?.getUser) {
+      const respuesta = await getLazyUser({
+        variables: { id: user.attributes.sub },
+      });
+      console.log(respuesta.data);
+      if (respuesta.data.getUser === null) {
+        console.log("entered creation");
         /* ///////////CREATE user in DB if is new*/
-        console.log("creating");
-        const response = await OncreateUser({
+        await OncreateUser({
           variables: {
             input: {
               id: user.attributes.sub,
@@ -65,13 +66,14 @@ const Navigation = () => {
         });
       }
     } catch (e) {
-      Alert.alert("Error uploading", e.message);
+      console.log("Error creating new user in DB", e.message);
     }
   };
 
   useEffect(() => {
     checkOnboarding();
     saving();
+    /*    console.log(data); */
   }, []);
 
   /* /////////////////////////////////////////add Auth use to User Db//////////// */

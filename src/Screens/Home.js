@@ -9,6 +9,7 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -33,7 +34,7 @@ const imageH = imageW * 1.54;
 
 const Home = ({ route }) => {
   const navigation = useNavigation();
-  const userData = route.params?.user?.getUser;
+  const userData = route.params.user.getUser;
   const [switcher, setswitcher] = useState(false);
 
   const plugSwitch = (value) => {
@@ -42,7 +43,8 @@ const Home = ({ route }) => {
 
   const onPressBtn = async () => {
     try {
-      await AsyncStorage.removeItem("boarded");
+      console.log(userData);
+      /* await AsyncStorage.removeItem("boarded"); */
     } catch (err) {
       console.log("Error @setItem: ", err);
     }

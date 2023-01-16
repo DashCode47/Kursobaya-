@@ -28,8 +28,8 @@ const Settings = ({ plugSwitch, switcher, userData }) => {
     setusername(queryuser?.getUser?.name);
   }, []);
 
-  const { data: queryuser } = useQuery(getUser, {
-    variables: { id: userData.id },
+  const { data: queryuser, loading2 } = useQuery(getUser, {
+    variables: { id: userData?.id },
   });
   const onUpdating = async () => {
     try {

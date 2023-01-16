@@ -12,15 +12,20 @@ const Context = (props) => {
   const [badge, setbadge] = useState(0);
   const [messages, setmessages] = useState([]);
 
+  //Funcion get user and save in Context
+  const setterAuthUser = async () => {
+    const authUser = await Auth.currentAuthenticatedUser({
+      bypassCache: true,
+    });
+    setuser(authUser);
+  };
   /* GET AUTH USER */
   useEffect(() => {
-    const setterAuthUser = async () => {
-      const authUser = await Auth.currentAuthenticatedUser({
-        bypassCache: true,
-      });
-      setuser(authUser);
-    };
-    setterAuthUser();
+    try {
+      setterAuthUser();
+    } catch (e) {
+      Alert.alert("No se guardo el nombre en Context", e.message);
+    }
   }, []);
   return !user ? (
     <ActivityIndicator
